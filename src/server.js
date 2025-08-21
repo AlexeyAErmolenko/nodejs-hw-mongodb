@@ -3,8 +3,8 @@ import pino from 'pino-http';
 import cors from 'cors';
 
 import { getEnvVar } from './utils/getEnvVar.js';
-
-const PORT = Number(getEnvVar('PORT', '3000'));
+import { ENV_VARS } from './constants/env.js';
+import { getAllContacts, getContactById } from './services/contacts.js';
 
 export const startServer = () => {
   const app = express();
@@ -14,13 +14,34 @@ export const startServer = () => {
 
   app.use(pino({ transport: { target: 'pino-pretty' } }));
 
-  app.get('/', (req, res) => {
-    res.json({ message: 'Hello world!' });
+  app.get('/contacts', async (_, res) => {
+    const contacts = await getAllContacts();
+    res.status(200).json({
+      message: 'Successfully found contacts!',
+      data: contacts,
+    });
   });
 
-  // app.use('*', (req, res, next) => {
-  //   res.status(404).json({ message: 'Not found' });
-  // });
+  app.get('/contacts/:contactId', async (req, res) => {
+    const { contactId } = req.params;
+    const contact = await getContactById(contactId);
+
+    if (!contact) {
+      res.status(404).json({
+        message: 'Contact not found',
+      });
+      return;
+    }
+
+    res.status(200).json({
+      message: `Successfully found contact with id ${contactId}!`,
+      data: contact,
+    });
+  });
+
+  app.use((_, res) => {
+    res.status(404).json({ message: 'Route not found' });
+  });
 
   app.use((err, req, res, next) => {
     res.status(500).json({
@@ -29,7 +50,8 @@ export const startServer = () => {
     });
   });
 
+  const PORT = Number(getEnvVar(ENV_VARS.PORT, '3001'));
   app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on port `, PORT);
   });
 };
