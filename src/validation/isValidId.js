@@ -1,11 +1,11 @@
-import Joi from 'joi';
+import { isValidObjectId } from 'mongoose';
+import createHttpError from 'http-errors';
 
-export const idContactSchema = Joi.object({
-  id: Joi.string()
-    .pattern(/^[a-f0-9]{24}$/)
-    .required()
-    .messages({
-      'string.pattern.base': 'Id must be a 24-character hexadecimal string!',
-      'any.required': 'id is required!',
-    }),
-});
+export const isValidId = (req, res, next) => {
+  const { contactId } = req.params;
+  if (!isValidObjectId(contactId)) {
+    throw createHttpError(400, 'Bad Request');
+  }
+
+  next();
+};
