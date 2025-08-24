@@ -9,10 +9,10 @@ import {
   deleteContactByIdController,
 } from '../controllers/contacts.js';
 
-import { ctrlWrapper } from '../utils/ctrlWrapper.js';
+import ctrlWrapper from '../utils/ctrlWrapper.js';
 
-import { validateBody } from '../validation/validateBody.js';
-import { isValidId } from '../validation/isValidId.js';
+import validateBody from '../validation/validateBody.js';
+import isValidId from '../validation/isValidId.js';
 import {
   createContactSchema,
   changeContactSchema,

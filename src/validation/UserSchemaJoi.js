@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-export const registerUserSchema = Joi.object({
+const registerUserSchema = Joi.object({
   name: Joi.string().min(3).max(30).required().messages({
     'string.min': 'Min {#limit} characters long.',
     'string.max': 'Max {#limit} characters.',
@@ -14,3 +14,4 @@ export const registerUserSchema = Joi.object({
     'any.required': 'Password is required!',
   }),
 });
+export default registerUserSchema;

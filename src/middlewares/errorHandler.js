@@ -1,12 +1,18 @@
-import { HttpError } from 'http-errors';
 import { MongooseError } from 'mongoose';
+import { isHttpError } from 'http-errors';
 
-export const errorHandler = (err, req, res, next) => {
-  if (err instanceof HttpError) {
-    return res.status(err.status).json({
-      status: err.status,
-      message: err.name,
-      data: err,
+const errorHandler = (err, req, res, next) => {
+  const {
+    status = 500,
+    message = 'Internal Server Error',
+    name = 'ServerError',
+  } = err;
+
+  if (isHttpError(err)) {
+    return res.status(status).json({
+      status,
+      message,
+      data: err.data,
     });
   }
 
@@ -19,15 +25,18 @@ export const errorHandler = (err, req, res, next) => {
   }
 
   if (err.isJoi) {
-    return res.status(err.status).json({
-      status: err.status,
-      message: err.name,
-      name: 'Validation error',
+    return res.status(400).json({
+      status: 400,
+      message: 'Bad Request',
+      data: err.details,
     });
   }
 
-  res.status(500).json({
-    message: 'Internal server error',
-    error: err.message,
+  res.status(status).json({
+    status,
+    message,
+    name,
   });
 };
+
+export default errorHandler;
