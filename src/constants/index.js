@@ -6,10 +6,11 @@ export const SORT_ORDER = {
 export const KEYS_OF_CONTACT = [
   '_id',
   'name',
-  // 'email',
   'isFavourite',
   'contactType',
   'createdAt',
   'updatedAt',
-  // 'phoneNumber',
 ];
+
+export const FIFTEEN_MINUTES = 15 * 60 * 1000;
+export const THIRTY_DAY = 30 * 24 * 60 * 60 * 1000;
