@@ -29,6 +29,7 @@ export const getContactsController = async (req, res) => {
     sortBy,
     sortOrder,
     filter,
+    userId: req.user.id,
   });
 
   res.json({
@@ -40,7 +41,9 @@ export const getContactsController = async (req, res) => {
 
 export const getContactByIdController = async (req, res) => {
   const { contactId } = req.params;
-  const contact = await getContactById(contactId);
+  const userId = req.user.id;
+
+  const contact = await getContactById(contactId, userId);
   if (!contact) {
     throw contactNotFound();
   }
@@ -52,7 +55,15 @@ export const getContactByIdController = async (req, res) => {
 };
 
 export const createContactsController = async (req, res) => {
-  const contact = await createContact(req.body);
+  const payload = {
+    name: req.body.name,
+    email: req.body.email,
+    phoneNumber: req.body.phoneNumber,
+    isFavourite: req.body.isFavourite,
+    contactType: req.body.contactType,
+    userId: req.user.id,
+  };
+  const contact = await createContact(payload);
 
   res.status(201).json({
     status: 201,
@@ -63,7 +74,14 @@ export const createContactsController = async (req, res) => {
 
 export const upsertContactController = async (req, res, next) => {
   const { contactId } = req.params;
-  const result = await updateContact(contactId, req.body, { upsert: true });
+  const userId = req.user.id;
+  const filter = {
+    _id: contactId,
+    userId,
+  };
+  const result = await updateContact(filter, req.body, {
+    upsert: true,
+  });
   if (!result) {
     throw contactNotFound();
   }
@@ -79,10 +97,12 @@ export const upsertContactController = async (req, res, next) => {
 
 export const patchContactController = async (req, res, next) => {
   const { contactId } = req.params;
-  const result = await updateContact(contactId, req.body);
-  // if (!result) {
-  //   throw contactNotFound();
-  // }
+  const userId = req.user.id;
+  const filter = {
+    _id: contactId,
+    userId,
+  };
+  const result = await updateContact(filter, req.body);
 
   res.json({
     status: 200,
@@ -93,7 +113,8 @@ export const patchContactController = async (req, res, next) => {
 
 export const deleteContactByIdController = async (req, res) => {
   const { contactId } = req.params;
-  const contact = await deleteContactById(contactId);
+  const userId = req.user.id;
+  const contact = await deleteContactById(contactId, userId);
   if (!contact) {
     throw contactNotFound();
   }
