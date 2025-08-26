@@ -14,6 +14,7 @@ const contactSchema = new Schema(
     },
     email: {
       type: String,
+      unique: true,
       trim: true,
       lowercase: true,
     },

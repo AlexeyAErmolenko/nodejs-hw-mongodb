@@ -5,6 +5,7 @@ import {
   refreshUsersSession,
 } from '../services/auth.js';
 import { THIRTY_DAY } from '../constants/index.js';
+import serializeUser from '../utils/serializeUser.js';
 
 export const registerUserController = async (req, res) => {
   const user = await registerUser(req.body);
@@ -12,7 +13,7 @@ export const registerUserController = async (req, res) => {
   res.status(201).json({
     status: 201,
     message: 'Successfully registered a user!',
-    data: user,
+    data: serializeUser(user),
   });
 };
 

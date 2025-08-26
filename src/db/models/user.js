@@ -19,6 +19,10 @@ const userSchema = new Schema(
       type: String,
       required: [true, 'Set password for user'],
     },
+    avatarUrl: {
+      type: String,
+      required: [false, 'Set password for user'],
+    },
   },
   {
     timestamps: true,
