@@ -14,7 +14,23 @@ import parseSortParams from '../utils/parseSortParams.js';
 
 import parseFilterParams from '../utils/parseFilterParams.js';
 
+import saveFileToUploadDir from '../utils/saveFileToUploadDir.js';
+import saveFileToCloudinary from '../utils/saveFileToCloudinary.js';
+import getEnvVar from '../utils/getEnvVar.js';
+
+console.log('🚀 ~ ENABLE_CLOUDINARY:', getEnvVar('ENABLE_CLOUDINARY'));
+
 const contactNotFound = () => createHttpError(404, 'Contact not found');
+
+const WhereToSavePhotos = async (photo) => {
+  if (photo) {
+    if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
+      return await saveFileToCloudinary(photo);
+    } else {
+      return await saveFileToUploadDir(photo);
+    }
+  }
+};
 
 export const getContactsController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -55,6 +71,9 @@ export const getContactByIdController = async (req, res) => {
 };
 
 export const createContactsController = async (req, res) => {
+  const photo = req.file;
+  const photoUrl = await WhereToSavePhotos(photo);
+
   const payload = {
     name: req.body.name,
     email: req.body.email,
@@ -62,6 +81,7 @@ export const createContactsController = async (req, res) => {
     isFavourite: req.body.isFavourite,
     contactType: req.body.contactType,
     userId: req.user.id,
+    photo: photoUrl,
   };
   const contact = await createContact(payload);
 
@@ -79,9 +99,17 @@ export const upsertContactController = async (req, res, next) => {
     _id: contactId,
     userId,
   };
-  const result = await updateContact(filter, req.body, {
-    upsert: true,
-  });
+
+  const photo = req.file;
+  const photoUrl = await WhereToSavePhotos(photo);
+
+  const result = await updateContact(
+    filter,
+    { photo: photoUrl, ...req.body },
+    {
+      upsert: true,
+    },
+  );
   if (!result) {
     throw contactNotFound();
   }
@@ -102,7 +130,14 @@ export const patchContactController = async (req, res, next) => {
     _id: contactId,
     userId,
   };
-  const result = await updateContact(filter, req.body);
+
+  const photo = req.file;
+  const photoUrl = await WhereToSavePhotos(photo);
+
+  const result = await updateContact(filter, {
+    photo: photoUrl,
+    ...req.body,
+  });
 
   res.json({
     status: 200,

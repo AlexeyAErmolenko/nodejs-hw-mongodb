@@ -3,7 +3,7 @@ import pino from 'pino-http';
 import cors from 'cors';
 
 import getEnvVar from './utils/getEnvVar.js';
-import { ENV_VARS } from './constants/env.js';
+import ENV_VARS from './constants/env.js';
 
 import contactsRouter from './routers/index.js';
 
@@ -12,8 +12,12 @@ import errorHandler from './middlewares/errorHandler.js';
 
 import cookieParser from 'cookie-parser';
 
-export const startServer = () => {
+import { UPLOAD_DIR } from './constants/path.js';
+
+const startServer = () => {
   const app = express();
+
+  app.use('/uploads', express.static(UPLOAD_DIR));
 
   app.use(
     express.json({
@@ -38,3 +42,5 @@ export const startServer = () => {
     console.log(`Server is running on port `, PORT);
   });
 };
+
+export default startServer;
