@@ -1,4 +1,6 @@
 myTest.js
+/temp/**
+/uploads/**
 
 # Logs
 logs
