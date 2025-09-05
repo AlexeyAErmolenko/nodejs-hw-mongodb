@@ -14,10 +14,13 @@ import cookieParser from 'cookie-parser';
 
 import { UPLOAD_DIR } from './constants/path.js';
 
+import swaggerDocs from './middlewares/swaggerDocs.js';
+
 const startServer = () => {
   const app = express();
 
   app.use('/uploads', express.static(UPLOAD_DIR));
+  app.use('/api-docs', swaggerDocs());
 
   app.use(
     express.json({

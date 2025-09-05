@@ -1,0 +1,16 @@
+apis:
+  Contact@v1:
+    root: ./docs/openapi.yaml
+
+extends:
+  - recommended
+
+rules:
+  no-unused-components: error
+
+openapi:
+  codeSamples:
+    languages:
+      - lang: curl
+      - lang: nodejs
+      - lang: javascript

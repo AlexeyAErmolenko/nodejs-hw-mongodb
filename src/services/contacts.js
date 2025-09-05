@@ -20,7 +20,9 @@ export const getAllContacts = async ({
   const limit = perPage;
   const skip = (page - 1) * perPage;
 
-  const contactsQuery = Contact.find({ userId });
+  const contactsQuery = Contact.find({ userId }).select(
+    '-createdAt -updatedAt',
+  );
 
   if (filter.contactType) {
     contactsQuery.where('contactType').equals(filter.contactType);
@@ -47,7 +49,9 @@ export const getAllContacts = async ({
 };
 
 export const getContactById = (contactId, userId) =>
-  Contact.findOne({ _id: contactId, userId: userId });
+  Contact.findOne({ _id: contactId, userId: userId }).select(
+    '-createdAt -updatedAt',
+  );
 
 export const createContact = async (payload) => {
   return await Contact.create(payload);

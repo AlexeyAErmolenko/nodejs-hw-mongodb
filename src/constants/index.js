@@ -8,8 +8,8 @@ export const KEYS_OF_CONTACT = [
   'name',
   'isFavourite',
   'contactType',
-  'createdAt',
-  'updatedAt',
+  // 'createdAt',
+  // 'updatedAt',
 ];
 
 export const FIFTEEN_MINUTES = 15 * 60 * 1000;

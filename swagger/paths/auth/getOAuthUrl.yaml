@@ -1,0 +1,44 @@
+tags:
+  - Auth
+summary: get OAuth url
+operationId: getOAuthUrl
+description: 'Get OAuth url'
+security: []
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          token:
+            description: 'email'
+            type: string
+            example: qwert@gmail.com
+          password:
+            description: 'password'
+            type: string
+            example: 236458qwQ
+responses:
+  '200':
+    description: 'Successfully get Google OAuth url!'
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully get Google OAuth url!
+            data:
+              type: object
+              example:
+                'url': 'https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&response_type=code&client_id=704583197652-ktk1e8k1m9a281dflf3qh7qdnctriiqd.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fconfirm-google-auth'
+  '400':
+    $ref: '../../components/responses/400.yaml'
